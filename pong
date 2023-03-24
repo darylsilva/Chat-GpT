@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pong Game</title>
+    <style>
+        /* Add your CSS styling here */
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background-color: #000;
+    border: 2px solid #fff;
+}
+// Set up canvas and context
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// Set up ball properties
+let ballX = canvas.width / 2;
+let ballY = canvas.height / 2;
+let ballRadius = 10;
+let ballSpeedX = 5;
+let ballSpeedY = 5;
+
+// Set up paddle properties
+let paddleWidth = 10;
+let paddleHeight = 100;
+let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
+let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
+let paddleSpeed = 10;
+
+// Set up scores
+let leftScore = 0;
+let rightScore = 0;
+
+// Draw ball
+function drawBall() {
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.closePath();
+}
+
+// Draw paddles
+function drawPaddles() {
+    // Left paddle
+    ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight);
+
+    // Right paddle
+    ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
+}
+
+// Draw scores
+function drawScores() {
+    ctx.font = '32px Arial';
+    ctx.fillText(leftScore, canvas.width / 4, 50);
+    ctx.fillText(rightScore, canvas.width * 3 / 4, 50);
+}
+
+// Move paddles
+function movePaddles() {
+    // Move left paddle
+    if (upPressed && leftPaddleY > 0) {
+        leftPaddleY -= paddleSpeed;
+    } else if (downPressed && leftPaddleY + paddleHeight < canvas.height) {
+        leftPaddleY += paddleSpeed;
+    }
+
+    // Move right paddle
+    if (wPressed && rightPaddleY > 0) {
+        rightPaddleY -= paddleSpeed;
+    } else if (sPressed && rightPaddleY + paddleHeight < canvas.height) {
+        rightPaddleY += paddleSpeed;
+    }
+}
+
+// Check for collisions
+function checkCollisions() {
+    // Check for collision with top/bottom walls
+    if (ballY + ballRadius > canvas.height || ballY - ballRadius < 0) {
+        ballSpeedY = -ballSpeedY;
+    }
+
+    // Check for collision with left paddle
+    if (ballX - ballRadius < paddleWidth && ballY + ballRadius > leftPaddleY && ballY - ballRadius < leftPaddleY + paddleHeight)
